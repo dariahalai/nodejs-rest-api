@@ -4,21 +4,35 @@ const {
   getContact,
   createContact,
   deleteContact,
-  refreshContact,
+  updateContact,
+  updateStatusContact,
 } = require("../../controllers/controllers");
 const {
-  toAddContactMiddlware,
-  toUpdateContactMiddlware,
+  checkCreateContactData,
+  checkUpdateContactData,
+  checkUpdateFavoriteContact,
+  checkContactId,
 } = require("../../middlewares/middlewares");
 
 const catchAsync = require("../../utils/catchAsync");
 
 const router = express.Router();
-
 router.get("/", catchAsync(contactsList));
-router.post("/", toAddContactMiddlware, catchAsync(createContact));
-router.put("/:contactId", toUpdateContactMiddlware, catchAsync(refreshContact));
-router.get("/:contactId", catchAsync(getContact));
-router.delete("/:contactId", catchAsync(deleteContact));
+router.post("/", checkCreateContactData, catchAsync(createContact));
+
+router.put(
+  "/:contactId",
+  checkContactId,
+  checkUpdateContactData,
+  catchAsync(updateContact)
+);
+router.get("/:contactId", checkContactId, catchAsync(getContact));
+router.delete("/:contactId", checkContactId, catchAsync(deleteContact));
+router.patch(
+  "/:contactId/favorite",
+  checkContactId,
+  checkUpdateFavoriteContact,
+  catchAsync(updateStatusContact)
+);
 
 module.exports = router;
