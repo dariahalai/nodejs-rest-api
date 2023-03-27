@@ -7,6 +7,7 @@ const {
   updateContact,
   updateStatusContact,
 } = require("../../controllers/controllers");
+const { protect } = require("../../middlewares/authMiddlewares");
 const {
   checkCreateContactData,
   checkUpdateContactData,
@@ -17,6 +18,9 @@ const {
 const catchAsync = require("../../utils/catchAsync");
 
 const router = express.Router();
+
+router.use(protect);
+
 router.get("/", catchAsync(contactsList));
 router.post("/", checkCreateContactData, catchAsync(createContact));
 
