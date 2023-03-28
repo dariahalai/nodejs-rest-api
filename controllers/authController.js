@@ -13,7 +13,12 @@ exports.register = async (req, res, next) => {
 
   newUser.password = undefined;
 
-  return res.status(201).json(newUser);
+  return res.status(201).json({
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+    },
+  });
 };
 
 exports.loginUser = async (req, res, next) => {
@@ -30,8 +35,14 @@ exports.loginUser = async (req, res, next) => {
   const token = signToken(user.id);
   user.setToken(token);
   const loginUser = await user.save();
-  const { _id, subscription } = loginUser;
-  return res.status(200).json({ _id, email, subscription, token });
+
+  return res.status(200).json({
+    token: loginUser.token,
+    user: {
+      email: loginUser.email,
+      subscription: loginUser.subscription,
+    },
+  });
 };
 
 exports.logoutUser = async (req, res, next) => {
@@ -49,5 +60,8 @@ exports.logoutUser = async (req, res, next) => {
 
 exports.getCurrentUser = async (req, res, next) => {
   const currentUser = req.user;
-  return res.status(200).json(currentUser);
+  return res
+    .status(200)
+    .json({ email: currentUser.email, subscription: currentUser.subscription });
 };
+
