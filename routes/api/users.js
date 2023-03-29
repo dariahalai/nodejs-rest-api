@@ -7,6 +7,7 @@ const {
 } = require("../../controllers/authController");
 const {
   checkRegisterUserData,
+  checkLoginUserData,
   protect,
 } = require("../../middlewares/authMiddlewares");
 
@@ -16,10 +17,10 @@ const router = express.Router();
 
 router.post("/register", checkRegisterUserData, catchAsync(register));
 
-router.post("/login", catchAsync(loginUser));
+router.post("/login", checkLoginUserData, catchAsync(loginUser));
 
 router.post("/logout", protect, catchAsync(logoutUser));
 
-router.post("/current", protect, catchAsync(getCurrentUser));
+router.get("/current", protect, catchAsync(getCurrentUser));
 
 module.exports = router;

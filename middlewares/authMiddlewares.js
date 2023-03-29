@@ -15,6 +15,16 @@ exports.checkRegisterUserData = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.checkLoginUserData = catchAsync(async (req, res, next) => {
+  const { error, value } = userDataValidator(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+  const userExists = await User.exists({ email: value.email });
+  if (!userExists)
+    return res.status(400).json({ message: error.details[0].message });
+  req.body = value;
+  next();
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
   const token =
     req.headers.authorization?.startsWith("Bearer") &&

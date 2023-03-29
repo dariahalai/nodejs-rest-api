@@ -22,7 +22,11 @@ const deleteContact = async (req, res, next) => {
 
 const createContact = async (req, res, next) => {
   const value = req.value;
-  const data = await Contacts.create(value);
+  const { email, subscription } = req.user;
+  const data = await Contacts.create({
+    owner: { email, subscription },
+    ...value,
+  });
 
   return res.status(201).json(data);
 };
