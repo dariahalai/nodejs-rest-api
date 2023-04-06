@@ -5,6 +5,7 @@ const catchAsync = require("../utils/catchAsync");
 dotenv.config({ path: "./.env" });
 
 const { userDataValidator } = require("../utils/userValidator");
+const ImageService = require("../services/imageService");
 
 exports.checkRegisterUserData = catchAsync(async (req, res, next) => {
   const { error, value } = userDataValidator(req.body);
@@ -45,3 +46,5 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.uploadUserPhoto = ImageService.upload("avatar");
