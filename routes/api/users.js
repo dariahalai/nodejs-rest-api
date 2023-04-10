@@ -5,12 +5,15 @@ const {
   logoutUser,
   getCurrentUser,
   updateAvatars,
+  verifyUser,
+  resendVerificationfToken,
 } = require("../../controllers/authController");
 const {
   checkRegisterUserData,
   checkLoginUserData,
   protect,
   uploadUserPhoto,
+  checkVerify,
 } = require("../../middlewares/authMiddlewares");
 
 const catchAsync = require("../../utils/catchAsync");
@@ -26,5 +29,9 @@ router.post("/logout", protect, catchAsync(logoutUser));
 router.get("/current", protect, catchAsync(getCurrentUser));
 
 router.patch("/avatars", protect, uploadUserPhoto, catchAsync(updateAvatars));
+
+router.get("/verify/:verificationToken", verifyUser);
+
+router.post("/verify", checkVerify, resendVerificationfToken);
 
 module.exports = router;

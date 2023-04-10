@@ -18,3 +18,8 @@ exports.updateUserSubscriptionValidator = (data) => {
     })
     .validate(data);
 };
+
+exports.verifyUserEmailValidator = (data) =>
+  Joi.object({
+    email: Joi.string().email().required(),
+  }).validate(data);
