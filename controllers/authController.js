@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { User } = require("../models/users");
 const ImageService = require("../services/imageService");
+const { emailConfirm } = require("../services/emailService");
 dotenv.config({ path: "./.env" });
 
 const signToken = (id) =>
@@ -13,7 +14,7 @@ exports.register = async (req, res, next) => {
   const newUser = await User.create(req.body);
 
   newUser.password = undefined;
-
+  emailConfirm(newUser.email, newUser.verificationToken);
   return res.status(201).json({
     user: {
       email: newUser.email,
@@ -80,4 +81,27 @@ exports.updateAvatars = async (req, res, next) => {
   const updatedUser = await user.save();
 
   res.status(200).json({ avatarURL: updatedUser.avatarURL });
+};
+
+exports.verifyUser = async (req, res, next) => {
+  const token = req.params.verificationToken;
+  const user = await User.findOne({ verificationToken: token });
+  if (!user) {
+    res.status(404).json({ message: "User not found" });
+    return;
+  }
+  user.setVerify(true);
+  await user.save();
+
+  res.status(200).json({ message: "Verification successful" });
+};
+
+exports.resendVerificationfToken = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+
+  emailConfirm(email, user.verificationToken);
+
+  res.status(200).json({ message: "Verification email sent" });
 };
